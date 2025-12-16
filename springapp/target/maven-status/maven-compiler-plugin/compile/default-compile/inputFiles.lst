@@ -4,3 +4,8 @@
 /home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/model/Product.java
 /home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/model/Rating.java
 /home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/model/User.java
+/home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/repository/CategoryRepo.java
+/home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/repository/FeedbackRepo.java
+/home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/repository/ProductRepo.java
+/home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/repository/RatingRepo.java
+/home/coder/project/workspace/springapp/src/main/java/com/examly/springapp/repository/UserRepo.java
