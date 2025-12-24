@@ -1,61 +1,56 @@
+
 package com.examly.springapp.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import com.examly.springapp.model.Category;
+import com.examly.springapp.service.CategoryService;
 
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
 
-    // ---------------- POST ----------------
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createCategory(
-            @RequestBody(required = false) Category category) {
+    @Autowired
+    private CategoryService categoryService;
 
-        // No body → 400 Bad Request
-        if (category == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @PostMapping
+    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
+        if (category.getCategoryName() == null || category.getCategoryName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
         }
-
-        // Empty or null name → 400 Bad Request
-        if (category.getCategoryName() == null ||
-            category.getCategoryName().trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
     }
 
-    // ---------------- GET ----------------
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
-
-        List<Category> categories = new ArrayList<>();
-
-        // Empty list → 204 No Content
-        if (categories.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+        List<Category> categories = categoryService.getAllCategories();
+        return categories.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(categories);
     }
 
-    // ---------------- PUT ----------------
+    @GetMapping("/{id}")
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+        Category category = categoryService.getCategoryById(id);
+        return category != null ? ResponseEntity.ok(category) : ResponseEntity.notFound().build();
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable int id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+        Category updated = categoryService.updateCategory(id, category);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
-    // ---------------- DELETE ----------------
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable int id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/page/{page}/{size}")
+    public ResponseEntity<Page<Category>> getCategoriesWithPagination(@PathVariable int page, @PathVariable int size) {
+        Page<Category> categories = categoryService.getCategoriesWithPagination(page, size);
+        return ResponseEntity.ok(categories);
     }
 }
+
